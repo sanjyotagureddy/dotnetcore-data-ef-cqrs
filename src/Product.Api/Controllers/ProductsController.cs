@@ -41,7 +41,7 @@ namespace Product.Api.Controllers
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult> UpdateOrder([FromBody] UpdateProductCommand command)
+    public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
     {
       await _mediator.Send(command);
       return NoContent();
