@@ -9,13 +9,13 @@ using Product.Application.Exceptions;
 
 namespace Product.Application.Features.Commands.UpdateProduct
 {
-  public class UpdateProductHandler : IRequestHandler<UpdateProductCommand>
+  public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand>
   {
-    private readonly ILogger<UpdateProductHandler> _logger;
+    private readonly ILogger<UpdateProductCommandHandler> _logger;
     private readonly IProductRepository _repository;
     private readonly IMapper _mapper;
 
-    public UpdateProductHandler(ILogger<UpdateProductHandler> logger, IProductRepository repository, IMapper mapper)
+    public UpdateProductCommandHandler(ILogger<UpdateProductCommandHandler> logger, IProductRepository repository, IMapper mapper)
     {
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       _repository = repository ?? throw new ArgumentNullException(nameof(repository));

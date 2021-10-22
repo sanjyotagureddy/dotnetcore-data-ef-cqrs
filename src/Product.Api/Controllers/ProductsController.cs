@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Product.Application.Features.Commands.AddProduct;
+using Product.Application.Features.Commands.DeleteProduct;
 using Product.Application.Features.Commands.UpdateProduct;
 using Product.Application.Features.Queries.GetProduct;
 
@@ -14,7 +15,7 @@ namespace Product.Api.Controllers
   public class ProductsController : ControllerBase
   {
     private readonly IMediator _mediator;
-    
+
     public ProductsController(IMediator mediator)
     {
       _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
@@ -42,7 +43,18 @@ namespace Product.Api.Controllers
     [ProducesDefaultResponseType]
     public async Task<ActionResult> UpdateOrder([FromBody] UpdateProductCommand command)
     {
-      var x = await _mediator.Send(command);
+      await _mediator.Send(command);
+      return NoContent();
+    }
+
+    [HttpDelete("{id}", Name = "DeleteOrder")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult> DeleteProduct(int id)
+    {
+      var command = new DeleteProductCommand() { Id = id };
+      await _mediator.Send(command);
       return NoContent();
     }
   }
