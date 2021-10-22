@@ -39,7 +39,7 @@ namespace Products.UnitTest.Tests
     {
       var result = await _repository.GetByIdAsync(1);
       result.Should().NotBeNull();
-      result.Sku.Should().Be("TestSku-1"); 
+      result.Sku.Should().Be("TestSku-1");
       result.Description.Should().Be("A description");
       result.Id.Should().Be(1);
     }
@@ -155,7 +155,7 @@ namespace Products.UnitTest.Tests
 
     #region Private Methods
 
-    private Product.Domain.Entities.Product GetMockProductToAdd() =>
+    private static Product.Domain.Entities.Product GetMockProductToAdd() =>
         new()
         {
           Id = 4,
@@ -165,7 +165,7 @@ namespace Products.UnitTest.Tests
           Price = 49.99
         };
 
-    private IEnumerable<Product.Domain.Entities.Product> GetMockProductListToAdd() =>
+    private static IEnumerable<Product.Domain.Entities.Product> GetMockProductListToAdd() =>
       new List<Product.Domain.Entities.Product>()
       {
           new()
