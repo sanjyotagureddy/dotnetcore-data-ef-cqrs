@@ -33,7 +33,7 @@ namespace Products.UnitTest.Tests.Controller
     private GetProductQueryHandler _getProductQueryHandler;
     private DeleteProductCommandHandler _deleteProductCommandHandler;
     private UpdateProductCommandHandler _updateProductCommandHandler;
-    
+
 
     private readonly IProductRepository _repository;
     private readonly UpdateProductCommand _updateProductCommand;
@@ -57,7 +57,7 @@ namespace Products.UnitTest.Tests.Controller
       _controller = new ProductsController(_mockMediatR.Object);
       _deleteCommandLogger = new Mock<ILogger<DeleteProductCommandHandler>>();
 
-       _updateProductCommand = new UpdateProductCommand { Id = 2, Description = "Updated Product", Price = 99, Name = "New Name" };
+      _updateProductCommand = new UpdateProductCommand { Id = 2, Description = "Updated Product", Price = 99, Name = "New Name" };
     }
 
     [Fact]
@@ -106,12 +106,12 @@ namespace Products.UnitTest.Tests.Controller
         .Returns(async () =>
           await _updateProductCommandHandler.Handle(_updateProductCommand, new CancellationToken()));
 
-      
+
       var orders = await _controller.UpdateProduct(_updateProductCommand);
       if (orders is not NoContentResult okResult) return;
       okResult.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
 
-      var product =await _repository.GetByIdAsync(2);
+      var product = await _repository.GetByIdAsync(2);
       product.Description.Should().Be("Updated Product");
 
     }
@@ -125,7 +125,7 @@ namespace Products.UnitTest.Tests.Controller
         .Throws(new NotFoundException("Product", 365));
       _updateProductCommand.Id = 7985;
       Func<Task> func = async () => await _controller.UpdateProduct(_updateProductCommand);
-      func.Should().Throw<NotFoundException>().WithMessage($"Entity \"Product\" (365) was not found");
+      func.Should().ThrowAsync<NotFoundException>().WithMessage("Entity \"Product\" (365) was not found");
     }
 
     #endregion
@@ -153,7 +153,7 @@ namespace Products.UnitTest.Tests.Controller
       _mockMediatR.Setup(m => m.Send(It.IsAny<DeleteProductCommand>(), It.IsAny<CancellationToken>()))
         .Throws(new NotFoundException("Product", 365));
       Func<Task> func = async () => await _controller.DeleteProduct(365);
-      func.Should().Throw<NotFoundException>().WithMessage($"Entity \"Product\" (365) was not found");
+      func.Should().ThrowAsync<NotFoundException>().WithMessage($"Entity \"Product\" (365) was not found");
     }
   }
 }
