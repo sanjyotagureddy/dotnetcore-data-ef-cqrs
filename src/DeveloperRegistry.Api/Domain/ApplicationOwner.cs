@@ -10,7 +10,7 @@ public sealed class ApplicationOwner
 
     public string OwnerId { get; private set; } = string.Empty;
 
-    public DateTime AddedAtUtc { get; private set; }
+    public DateTime CreatedAtUtc { get; private set; }
 
     public RegisteredApplication Application { get; private set; } = default!;
 
@@ -22,7 +22,7 @@ public sealed class ApplicationOwner
         {
             ApplicationId = applicationId,
             OwnerId = ownerId,
-            AddedAtUtc = utcNow,
+            CreatedAtUtc = utcNow,
         };
     }
 }

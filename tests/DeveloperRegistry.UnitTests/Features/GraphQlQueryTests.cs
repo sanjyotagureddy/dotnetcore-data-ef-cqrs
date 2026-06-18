@@ -15,13 +15,13 @@ public sealed class GraphQlQueryTests
     {
         var connection = new Mock<IDbConnection>();
         var factory = new Mock<ISqlConnectionFactory>();
-        IReadOnlyList<DeveloperRegistry.Api.Features.Applications.SearchApplications.Response> rows =
+        IReadOnlyList<DeveloperRegistry.Api.Features.Applications.SearchApplications.ApplicationSearchItem> rows =
         [
             new("app1", "Portal", "Main portal", false, DateTime.UtcNow),
         ];
 
         connection
-            .SetupDapperAsync(c => c.QueryAsync<DeveloperRegistry.Api.Features.Applications.SearchApplications.Response>(It.IsAny<CommandDefinition>()))
+             .SetupDapperAsync(c => c.QueryAsync<DeveloperRegistry.Api.Features.Applications.SearchApplications.ApplicationSearchItem>(It.IsAny<CommandDefinition>()))
             .ReturnsAsync(rows);
         factory
             .Setup(x => x.OpenConnectionAsync(It.IsAny<CancellationToken>()))
@@ -41,7 +41,7 @@ public sealed class GraphQlQueryTests
     {
         var connection = new Mock<IDbConnection>();
         var factory = new Mock<ISqlConnectionFactory>();
-        var dashboard = new DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.Response(
+        var dashboard = new DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.ApplicationDashboard(
             "app1",
             "Portal",
             false,
@@ -52,7 +52,7 @@ public sealed class GraphQlQueryTests
             DateTime.UtcNow);
 
         connection
-            .SetupDapperAsync(c => c.QuerySingleOrDefaultAsync<DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.Response>(It.IsAny<CommandDefinition>()))
+             .SetupDapperAsync(c => c.QuerySingleOrDefaultAsync<DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.ApplicationDashboard>(It.IsAny<CommandDefinition>()))
             .ReturnsAsync(dashboard);
         factory
             .Setup(x => x.OpenConnectionAsync(It.IsAny<CancellationToken>()))

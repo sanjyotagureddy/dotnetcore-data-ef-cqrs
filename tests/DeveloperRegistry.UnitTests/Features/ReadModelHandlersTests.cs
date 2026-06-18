@@ -15,14 +15,14 @@ public sealed class ReadModelHandlersTests
         var connection = new Mock<IDbConnection>();
         var factory = new Mock<ISqlConnectionFactory>();
         var now = DateTime.UtcNow;
-        IReadOnlyList<DeveloperRegistry.Api.Features.Applications.SearchApplications.Response> rows =
+        IReadOnlyList<DeveloperRegistry.Api.Features.Applications.SearchApplications.ApplicationSearchItem> rows =
         [
             new("app1", "Portal", "Main portal", false, now),
             new("app2", "Billing", "Billing app", true, now.AddMinutes(-5)),
         ];
 
         connection
-            .SetupDapperAsync(c => c.QueryAsync<DeveloperRegistry.Api.Features.Applications.SearchApplications.Response>(It.IsAny<Dapper.CommandDefinition>()))
+             .SetupDapperAsync(c => c.QueryAsync<DeveloperRegistry.Api.Features.Applications.SearchApplications.ApplicationSearchItem>(It.IsAny<Dapper.CommandDefinition>()))
             .ReturnsAsync(rows);
         factory
             .Setup(x => x.OpenConnectionAsync(It.IsAny<CancellationToken>()))
@@ -42,7 +42,7 @@ public sealed class ReadModelHandlersTests
         var connection = new Mock<IDbConnection>();
         var factory = new Mock<ISqlConnectionFactory>();
         var now = DateTime.UtcNow;
-        var row = new DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.Response(
+        var row = new DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.ApplicationDashboard(
             "app1",
             "Portal",
             false,
@@ -53,7 +53,7 @@ public sealed class ReadModelHandlersTests
             now);
 
         connection
-            .SetupDapperAsync(c => c.QuerySingleOrDefaultAsync<DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.Response>(It.IsAny<Dapper.CommandDefinition>()))
+             .SetupDapperAsync(c => c.QuerySingleOrDefaultAsync<DeveloperRegistry.Api.Features.Applications.GetApplicationDashboard.ApplicationDashboard>(It.IsAny<Dapper.CommandDefinition>()))
             .ReturnsAsync(row);
         factory
             .Setup(x => x.OpenConnectionAsync(It.IsAny<CancellationToken>()))

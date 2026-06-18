@@ -13,7 +13,7 @@ public sealed class ApplicationOwnerConfiguration : IEntityTypeConfiguration<App
         builder.HasKey(x => new { x.ApplicationId, x.OwnerId });
         builder.Property(x => x.ApplicationId).HasColumnName("application_id").HasMaxLength(26).IsRequired();
         builder.Property(x => x.OwnerId).HasColumnName("owner_id").HasMaxLength(26).IsRequired();
-        builder.Property(x => x.AddedAtUtc).HasColumnName("added_at_utc").IsRequired();
+        builder.Property(x => x.CreatedAtUtc).HasColumnName("added_at_utc").IsRequired();
 
         builder.HasIndex(x => x.OwnerId);
     }

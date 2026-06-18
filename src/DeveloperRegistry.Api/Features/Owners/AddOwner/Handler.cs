@@ -1,3 +1,4 @@
+using DeveloperRegistry.Api.Common;
 using DeveloperRegistry.Api.Common.Exceptions;
 using DeveloperRegistry.Api.Common.Time;
 using DeveloperRegistry.Api.Common.Validation;
@@ -14,17 +15,13 @@ public sealed class Handler(RegistryDbContext dbContext, IClock clock, IValidato
     {
         await validator.ValidateRequestAsync(command, cancellationToken);
 
-        var applicationExists = await dbContext.Applications.AnyAsync(x => x.Id == command.ApplicationId, cancellationToken);
-        if (!applicationExists)
-        {
-            throw new NotFoundException($"Application '{command.ApplicationId}' was not found.");
-        }
+        var application = await dbContext.Applications.FirstOrDefaultAsync(x => x.Id == command.ApplicationId, cancellationToken)
+            ?? throw new NotFoundException($"Application '{command.ApplicationId}' was not found.");
 
-        var normalizedEmail = command.Email.Trim().ToLowerInvariant();
-        var owner = await dbContext.Owners.FirstOrDefaultAsync(x => x.Email == normalizedEmail, cancellationToken);
+        var owner = await dbContext.Owners.FirstOrDefaultAsync(x => x.Email == command.Email.Trim().ToLowerInvariant(), cancellationToken);
         if (owner is null)
         {
-            owner = Owner.Create(NUlid.Ulid.NewUlid().ToString(), command.Name, normalizedEmail, clock.UtcNow);
+            owner = Owner.Create(IdGenerator.NewId(), command.Name, command.Email, clock.UtcNow);
             dbContext.Owners.Add(owner);
         }
 
@@ -34,7 +31,7 @@ public sealed class Handler(RegistryDbContext dbContext, IClock clock, IValidato
 
         if (!exists)
         {
-            dbContext.ApplicationOwners.Add(ApplicationOwner.Create(command.ApplicationId, owner.Id, clock.UtcNow));
+            application.AddOwner(owner.Id, clock.UtcNow);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

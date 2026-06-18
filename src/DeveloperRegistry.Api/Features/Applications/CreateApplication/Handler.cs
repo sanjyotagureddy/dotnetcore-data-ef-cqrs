@@ -1,3 +1,5 @@
+using DeveloperRegistry.Api.Common;
+using DeveloperRegistry.Api.Common.Exceptions;
 using DeveloperRegistry.Api.Common.Time;
 using DeveloperRegistry.Api.Common.Validation;
 using DeveloperRegistry.Api.Domain;
@@ -16,10 +18,10 @@ public sealed class Handler(RegistryDbContext dbContext, IClock clock, IValidato
         var exists = await dbContext.Applications.AnyAsync(x => x.Name == command.Name, cancellationToken);
         if (exists)
         {
-            throw new InvalidOperationException("An application with this name already exists.");
+            throw new ConflictException($"An application with the name '{command.Name}' already exists.");
         }
 
-        var application = RegisteredApplication.Create(NUlid.Ulid.NewUlid().ToString(), command.Name, command.Description, clock.UtcNow);
+        var application = RegisteredApplication.Create(IdGenerator.NewId(), command.Name, command.Description, clock.UtcNow);
         dbContext.Applications.Add(application);
         await dbContext.SaveChangesAsync(cancellationToken);
 

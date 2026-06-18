@@ -1,3 +1,4 @@
+using DeveloperRegistry.Api.Common.Exceptions;
 using DeveloperRegistry.Api.Domain;
 using DeveloperRegistry.Api.Features.Owners.RemoveOwner;
 using DeveloperRegistry.UnitTests.Support;
@@ -27,13 +28,13 @@ public sealed class RemoveOwnerHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldReturnFalse_WhenRelationMissing()
+    public async Task HandleAsync_ShouldThrow_WhenRelationMissing()
     {
         await using var dbContext = TestDbContextFactory.Create();
         var handler = new Handler(dbContext, new Validator());
 
-        var response = await handler.HandleAsync(new Command("00000000000000000000000009", "00000000000000000000000010"), CancellationToken.None);
+        var act = () => handler.HandleAsync(new Command("00000000000000000000000009", "00000000000000000000000010"), CancellationToken.None);
 
-        response.Removed.Should().BeFalse();
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 }

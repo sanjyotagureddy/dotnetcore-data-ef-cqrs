@@ -42,6 +42,11 @@ public sealed class RegisteredApplication
 
     public void Update(string name, string description, DateTime utcNow)
     {
+        if (IsArchived)
+        {
+            throw new InvalidOperationException("Cannot update an archived application.");
+        }
+
         Name = name.Trim();
         Description = description.Trim();
         UpdatedAtUtc = utcNow;
@@ -49,7 +54,48 @@ public sealed class RegisteredApplication
 
     public void Archive(DateTime utcNow)
     {
+        if (IsArchived)
+        {
+            throw new InvalidOperationException("Application is already archived.");
+        }
+
         IsArchived = true;
         UpdatedAtUtc = utcNow;
+    }
+
+    public ApiKey AddApiKey(string id, string name, string keyHash, DateTime utcNow, DateTime? expiresAtUtc)
+    {
+        if (IsArchived)
+        {
+            throw new InvalidOperationException("Cannot add an API key to an archived application.");
+        }
+
+        var apiKey = ApiKey.Create(id, Id, name, keyHash, utcNow, expiresAtUtc);
+        _apiKeys.Add(apiKey);
+        return apiKey;
+    }
+
+    public Webhook RegisterWebhook(string id, string eventName, string url, DateTime utcNow)
+    {
+        if (IsArchived)
+        {
+            throw new InvalidOperationException("Cannot register a webhook for an archived application.");
+        }
+
+        var webhook = Webhook.Create(id, Id, eventName, url, utcNow);
+        _webhooks.Add(webhook);
+        return webhook;
+    }
+
+    public ApplicationOwner AddOwner(string ownerId, DateTime utcNow)
+    {
+        if (IsArchived)
+        {
+            throw new InvalidOperationException("Cannot add an owner to an archived application.");
+        }
+
+        var link = ApplicationOwner.Create(Id, ownerId, utcNow);
+        _applicationOwners.Add(link);
+        return link;
     }
 }

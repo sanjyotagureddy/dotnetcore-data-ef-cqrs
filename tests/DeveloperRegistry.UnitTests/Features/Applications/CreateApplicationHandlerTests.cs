@@ -1,3 +1,4 @@
+using DeveloperRegistry.Api.Common.Exceptions;
 using DeveloperRegistry.Api.Features.Applications.CreateApplication;
 using DeveloperRegistry.Api.Persistence;
 using DeveloperRegistry.UnitTests.Support;
@@ -30,7 +31,7 @@ public sealed class CreateApplicationHandlerTests
         await handler.HandleAsync(new Command("Portal", "Developer Portal"), CancellationToken.None);
 
         var act = () => handler.HandleAsync(new Command("Portal", "Duplicate"), CancellationToken.None);
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<ConflictException>();
     }
 
     private static RegistryDbContext CreateDbContext()

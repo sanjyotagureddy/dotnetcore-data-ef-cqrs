@@ -14,7 +14,6 @@ public sealed class RotateApiKeyHandlerTests
         await using var dbContext = TestDbContextFactory.Create();
         var app = RegisteredApplication.Create("00000000000000000000000016", "Portal", "Desc", DateTime.UtcNow);
         var apiKey = ApiKey.Create("00000000000000000000000017", app.Id, "Primary", "old-hash", DateTime.UtcNow, null);
-        apiKey.Revoke();
         dbContext.Applications.Add(app);
         dbContext.ApiKeys.Add(apiKey);
         await dbContext.SaveChangesAsync();

@@ -38,11 +38,21 @@ public sealed class ApiKey
 
     public void Revoke()
     {
+        if (Status == ApiKeyStatus.Revoked)
+        {
+            throw new InvalidOperationException("API key is already revoked.");
+        }
+
         Status = ApiKeyStatus.Revoked;
     }
 
     public void Rotate(string keyHash, DateTime? expiresAtUtc)
     {
+        if (Status == ApiKeyStatus.Revoked)
+        {
+            throw new InvalidOperationException("Cannot rotate a revoked API key.");
+        }
+
         KeyHash = keyHash;
         ExpiresAtUtc = expiresAtUtc;
         Status = ApiKeyStatus.Active;

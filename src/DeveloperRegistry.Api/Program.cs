@@ -36,7 +36,8 @@ builder.Services.AddScoped<IClock, SystemClock>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 foreach (var handlerType in typeof(Program).Assembly.GetTypes()
-	.Where(type => type is { IsClass: true, IsAbstract: false, Name: "Handler" }))
+	.Where(type => type is { IsClass: true, IsAbstract: false } && type.Name == "Handler"
+		&& type.Namespace is not null && type.Namespace.Contains(".Features.")))
 {
 	builder.Services.AddScoped(handlerType);
 }

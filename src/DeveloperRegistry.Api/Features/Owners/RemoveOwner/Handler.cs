@@ -1,3 +1,4 @@
+using DeveloperRegistry.Api.Common.Exceptions;
 using DeveloperRegistry.Api.Common.Validation;
 using DeveloperRegistry.Api.Persistence;
 using FluentValidation;
@@ -13,12 +14,8 @@ public sealed class Handler(RegistryDbContext dbContext, IValidator<Command> val
 
         var relation = await dbContext.ApplicationOwners.FirstOrDefaultAsync(
             x => x.ApplicationId == command.ApplicationId && x.OwnerId == command.OwnerId,
-            cancellationToken);
-
-        if (relation is null)
-        {
-            return new Response(command.ApplicationId, command.OwnerId, false);
-        }
+            cancellationToken)
+            ?? throw new NotFoundException($"Owner '{command.OwnerId}' is not associated with application '{command.ApplicationId}'.");
 
         dbContext.ApplicationOwners.Remove(relation);
         await dbContext.SaveChangesAsync(cancellationToken);
