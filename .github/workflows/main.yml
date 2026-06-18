@@ -1,4 +1,4 @@
-name: .NET Core Build
+name: dotnet-ci
 
 on:
   push:
@@ -11,24 +11,24 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 10.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore dotnetcore-data-ef-cqrs.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build dotnetcore-data-ef-cqrs.sln --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      run: dotnet test dotnetcore-data-ef-cqrs.sln --configuration Release --no-build --verbosity normal
     
   codacy-analysis-cli:
     name: Codacy Analysis CLI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@master

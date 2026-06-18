@@ -1,0 +1,46 @@
+name: developer-registry-ci
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore DeveloperRegistry.slnx
+
+      - name: Build
+        run: dotnet build DeveloperRegistry.slnx -c Release -warnaserror --no-restore
+
+      - name: Run unit tests with 90% coverage gate
+        run: >-
+          dotnet test tests/DeveloperRegistry.UnitTests/DeveloperRegistry.UnitTests.csproj
+          -c Release
+          /p:CollectCoverage=true
+          /p:CoverletOutputFormat=cobertura
+          /p:CoverletOutput=TestResults/Coverage/
+          /p:Threshold=90
+          /p:ThresholdType=line
+          /p:ThresholdStat=total
+
+      - name: Run integration tests
+        run: dotnet test tests/DeveloperRegistry.IntegrationTests/DeveloperRegistry.IntegrationTests.csproj -c Release --no-build
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-results
+          path: '**/TestResults/**/coverage.cobertura.xml'
